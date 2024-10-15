@@ -12,7 +12,7 @@ import { UpdateKeywordAnalysisDto } from './dto/update-keyword-analysis.dto';
 import { KeywordAnalysisResponseDto } from './dto/keyword-analysis-response.dto';
 
 @ApiTags('Keyword Analysis')
-@Controller('keyword-analysis')
+@Controller('/api/keyword-analysis')
 export class KeywordAnalysisController {
   constructor(
     private readonly keywordAnalysisService: KeywordAnalysisService,
