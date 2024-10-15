@@ -4,6 +4,8 @@ import { KeywordAnalysis } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateKeywordAnalysisDto } from './dto/create-keyword-analysis.dto';
 import { UpdateKeywordAnalysisDto } from './dto/update-keyword-analysis.dto';
+import { KeywordAnalysisResponseDto } from './dto/keyword-analysis-response.dto';
+import { PotentialKeyword } from './types';
 
 @Injectable()
 export class KeywordAnalysisService {
@@ -62,5 +64,37 @@ export class KeywordAnalysisService {
       where: { id },
       include: { competitors: true },
     });
+  }
+
+  getPotentialKeywords({
+    competitors,
+    keywords,
+  }: KeywordAnalysisResponseDto): PotentialKeyword[] {
+    const competitorKeywords = competitors.map(
+      (competitor) => competitor.keywords,
+    );
+
+    // Flatten competitor keywords into a single array
+    const allCompetitorKeywords = competitorKeywords.flat();
+
+    // Create a frequency map of competitor keywords
+    const keywordFrequency: Record<string, number> = {};
+    allCompetitorKeywords.forEach((keyword) => {
+      keywordFrequency[keyword] = (keywordFrequency[keyword] || 0) + 1;
+    });
+
+    // Filter already used keywords
+    const newKeywords = Object.keys(keywordFrequency).filter(
+      (keyword) => !keywords.includes(keyword),
+    );
+
+    // Map new keywords to their usage scores
+    const keywordScores: PotentialKeyword[] = newKeywords.map((keyword) => ({
+      keyword,
+      score: keywordFrequency[keyword],
+    }));
+
+    // Sort by score in descending order (higher usage first)
+    return keywordScores.sort((a, b) => b.score - a.score);
   }
 }

@@ -53,9 +53,16 @@ export class KeywordAnalysisController {
   async findOne(
     @Param('id') id: string,
   ): Promise<KeywordAnalysisResponseDto | null> {
-    return (await this.keywordAnalysisService.getKeywordAnalysisById(
+    const data = (await this.keywordAnalysisService.getKeywordAnalysisById(
       id,
     )) as KeywordAnalysisResponseDto | null;
+
+    if (data) {
+      data.potentialKeywords =
+        this.keywordAnalysisService.getPotentialKeywords(data);
+    }
+
+    return data;
   }
 
   @Patch(':id')
@@ -82,6 +89,7 @@ export class KeywordAnalysisController {
       id,
       updateKeywordAnalysisDto,
     );
+
     return result as KeywordAnalysisResponseDto;
   }
 }

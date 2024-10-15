@@ -1,6 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Competitor } from '@prisma/client';
+
+import { PotentialKeyword } from '../types';
+
 import { CreateCompetitorDto } from './create-competitor.dto';
+import { PotentialKeywordDto } from './potential-keyword.dto';
 
 export class KeywordAnalysisResponseDto {
   @ApiProperty({
@@ -32,6 +36,12 @@ export class KeywordAnalysisResponseDto {
     description: 'List of competitors',
   })
   competitors: Competitor[];
+
+  @ApiProperty({
+    type: () => [PotentialKeywordDto],
+    description: 'List of potential keywords',
+  })
+  potentialKeywords?: PotentialKeyword[];
 
   @ApiProperty({
     example: '2024-01-01T12:00:00.000Z',
